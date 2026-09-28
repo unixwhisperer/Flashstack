@@ -9,7 +9,7 @@ FlashStack is the **neutral flash-liquidity rail for Bitcoin DeFi** — atomic, 
 ## Where it stands today (honest snapshot)
 
 - **Live on mainnet:** STX + canonical sBTC flash-loan engines, LP pools, a collateral oracle, and a receiver library.
-- **Tested:** 125 passing tests covering every deployed contract (both invariants + all guards).
+- **Tested:** 254 passing tests covering every deployed contract (both invariants + all guards).
 - **Capital:** reserve is ~75 STX and the LP pools are effectively unfunded — **reserve size is the hard ceiling** on what the protocol can serve.
 - **Trust:** not yet professionally audited; receivers are approval-gated (permissioned beta).
 - **Usage:** DeepStack runs a live pilot rebalancing through FlashStack — the flywheel, proven on mainnet in a single atomic transaction.
@@ -25,7 +25,7 @@ FlashStack is the **neutral flash-liquidity rail for Bitcoin DeFi** — atomic, 
 - [x] Independent security-review findings resolved; deployer key rotated (2026-06-12)
 
 **Testing & security**
-- [x] 125-test suite across every deployed contract (invariants + guards, fully offline)
+- [x] 254-test suite across every deployed contract (invariants + guards, fully offline)
 - [x] Internal security review documented (trust model, reentrancy reasoning, findings)
 - [x] LP-pool share-inflation hardening (v2 pools, virtual shares/assets) — built + proven by test, ready to deploy
 
@@ -44,9 +44,9 @@ FlashStack is the **neutral flash-liquidity rail for Bitcoin DeFi** — atomic, 
 
 The one ordering that matters: **security audit → LP deposits → reserves → capacity.**
 
-1. [ ] Deploy the **hardened v2 LP pools** (virtual-shares protection) before opening real LP deposits; migrate any v1 liquidity first
-2. [ ] Matching `flashstack-pool-oracle-v2` for the STX pool (oracle/pool math consistency)
-3. [ ] CI gating — tests + `clarinet check` required on every PR
+1. [x] Deploy the **hardened v2 LP pools** (virtual-shares protection) before opening real LP deposits; migrate any v1 liquidity first — **done**: `flashstack-stx-pool-v2` and `flashstack-sbtc-pool-v2` are live at `SPR9PQANV6XHSDNRAX2GNKCA5Z1KH61961KE0BYG`; both v1 pools are drained and paused
+2. [x] Matching `flashstack-pool-oracle-v2` for the STX pool (oracle/pool math consistency) — **done**: live at `SPR9PQAN…`
+3. [ ] CI gating — tests + `clarinet check` required on every PR — *workflow added (PR #44), but "required" is a branch-protection setting that cannot be read from this repository; unchecked until confirmed in repo settings*
 4. [ ] **Professional third-party audit** + bug bounty
 5. [ ] **Remove the receiver whitelist → fully permissionless** (post-audit — the core's solvency does not depend on the whitelist)
 6. [ ] Grow LP deposits → lift the reserve/capacity ceiling

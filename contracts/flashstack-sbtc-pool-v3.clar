@@ -3,6 +3,8 @@
 ;; `flashstack-sbtc-pool-v2`. A one-step transfer permanently bricks governance (and, on the cores,
 ;; strands the reserve) if admin is set to an unusable principal, with no recovery.
 ;; Here the update only PROPOSES; the new admin must call accept-admin. NOT DEPLOYED.
+;; F-8 FIX -- deposit is also gated by pause now (v2's deposit was not; flash-loan was).
+;; See docs/security/FINDINGS_REGISTER.md. withdraw stays ungated so LPs can always exit.
 ;; ============================================================================
 ;; FlashStack sBTC Pool v2 (HARDENED)
 ;;
@@ -92,6 +94,9 @@
     ;; shares = amount * (total_shares + VIRTUAL-SHARES) / (pool_balance + VIRTUAL-ASSETS)
     (new-shares (/ (* amount (+ current-shares VIRTUAL-SHARES)) (+ pool-balance VIRTUAL-ASSETS)))
   )
+    ;; F-8 fix: deposit is gated by pause, matching flash-loan and pool-v3's pv3-F3 fix.
+    ;; withdraw is deliberately never gated, so LPs can always still exit.
+    (asserts! (not (var-get paused)) ERR-PAUSED)
     (asserts! (> amount u0) ERR-ZERO-AMOUNT)
     (unwrap!
       (contract-call? 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token

@@ -1,0 +1,14 @@
+# Security & Contract Lead is required as a reviewer on anything that can
+# change protocol behavior or touch a mainnet deployment.
+/contracts/                    @unixwhisperer
+/deployments/                  @unixwhisperer
+/Clarinet.toml                 @unixwhisperer
+
+# Workflows are co-owned. NOTE ON SEMANTICS: GitHub satisfies a code-owner
+# requirement when ANY ONE listed owner approves, not all of them. Listing both
+# names here therefore means "either Hillary or Matt", not "both". It is here so
+# workflow changes reach both of us for review; it is deliberately NOT the
+# control that guarantees two sets of eyes. If we ever want that guaranteed,
+# it has to come from branch protection (required approvals >= 2), which is
+# admin-side and currently unverifiable from the repo (Flashstack-ajv.2.5).
+/.github/workflows/            @unixwhisperer @mattglory

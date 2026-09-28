@@ -1,3 +1,24 @@
+# ARCHIVED 2026-09-22 — DO NOT APPLY. This is a historical record only.
+#
+# This is the original gen-1 mainnet publish plan, describing a 13-contract
+# publish from SP3TGRVG... at epoch 2.5. Those contracts are long since live
+# on mainnet; this file has never been the mechanism that deployed them and
+# running it now would attempt to republish already-existing contract names
+# (which the chain would reject).
+#
+# Moved here, out of deployments/, and renamed off "default.mainnet-plan.yaml"
+# specifically to break `clarinet deployments apply --mainnet`'s no-flags
+# auto-pickup convention. Until 2026-09-22 this file died early because two of
+# its 13 paths (contracts/snp-flashstack-receiver.clar and -v3.clar) did not
+# exist in the checkout — a missing-file error was accidentally doing safety
+# work nobody designed for it. PR #70 committed those two files verbatim
+# (closing D7), which made all 13 paths resolve and turned this into a
+# genuinely runnable plan for the first time. It still needed a real mainnet
+# deployer key and would still fail on-chain on duplicate names, but the
+# "dies on a missing file" backstop was gone. See CONTRACT_INVENTORY.md D5.
+#
+# Kept, not deleted, as the only record of what this key/era actually
+# published — nothing else in the repo documents it.
 id: 0
 name: Mainnet deployment
 network: mainnet

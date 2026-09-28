@@ -4,8 +4,166 @@ description = "FlashStack - Trustless flash minting of sBTC against locked/stack
 authors = ["Glory Matthew"]
 telemetry = false
 cache_dir = "./.cache"
-requirements = []
 boot_contracts = []
+
+[[project.requirements ]]
+contract_id = "SP20XD46NGAX05ZQZDKFYCCX49A3852BQABNP0VG5.flashstack-stx-core"
+
+[[project.requirements ]]
+contract_id = "SP20XD46NGAX05ZQZDKFYCCX49A3852BQABNP0VG5.flashstack-sbtc-core"
+
+[[project.requirements ]]
+contract_id = "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex"
+
+[[project.requirements ]]
+contract_id = "SPQC38PW542EQJ5M11CR25P7BS1CA6QT4TBXGB3M.stableswap-stx-ststx-v-1-1"
+
+[[project.requirements ]]
+contract_id = "SPQC38PW542EQJ5M11CR25P7BS1CA6QT4TBXGB3M.stableswap-stx-ststx-v-1-2"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-vaults-data-v1-1"
+
+[[project.requirements ]]
+contract_id = "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-pool-v2-01"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-swap-v2-1"
+
+[[project.requirements ]]
+contract_id = "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router"
+
+[[project.requirements ]]
+contract_id = "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx-token"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.pool-borrow-v2-3"
+
+[[project.requirements ]]
+contract_id = "SP120SBRBQJ00MCWS7TM5R8WJNTTKD5K0HFRC2CNE.usdcx"
+
+[[project.requirements ]]
+contract_id = "SP1A27KFY4XERQCCRCARCYD1CC5N7M6688BSYADJ7.v0-4-market"
+
+[[project.requirements ]]
+contract_id = "SP1A27KFY4XERQCCRCARCYD1CC5N7M6688BSYADJ7.wstx"
+
+[[project.requirements ]]
+contract_id = "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to"
+
+[[project.requirements ]]
+contract_id = "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+
+[[project.requirements ]]
+contract_id = "SP20XD46NGAX05ZQZDKFYCCX49A3852BQABNP0VG5.sbtc-flash-receiver-trait"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-oracle-v2-3"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-token"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-vaults-helpers-v1-1"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-vaults-manager-v1-2"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-vaults-pool-active-v1-1"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-vaults-pool-liq-v1-2"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-vaults-sorted-v1-1"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-vaults-tokens-v1-1"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.usda-token"
+
+[[project.requirements ]]
+contract_id = "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.wrapped-stx-token"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.aeusdc-oracle-v1-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.alex-oracle-v1-1"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.diko-oracle-v1-1"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.stx-btc-oracle-v1-4"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.susdt-oracle-v1-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.usda-oracle-v1-1"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.usdh-oracle-v1-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.wstx"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.zaeusdc-v2-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.zalex-v2-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.zdiko-v2-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.zsbtc-v2-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.zststx-v2-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.zststxbtc-v2_v2-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.zsusdt-v2-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.zusda-v2-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.zusdh-v2-0"
+
+[[project.requirements ]]
+contract_id = "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.zwstx-v2-0"
+
+[[project.requirements ]]
+contract_id = "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-susdt"
+
+[[project.requirements ]]
+contract_id = "SP3TGRVG7DKGFVRTTVGGS60S59R916FWB4DAB9STZ.stx-flash-receiver-trait"
+
+[[project.requirements ]]
+contract_id = "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc"
+
+[[project.requirements ]]
+contract_id = "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststxbtc-token-v2"
+
+[[project.requirements ]]
+contract_id = "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1"
+
+[[project.requirements ]]
+contract_id = "SPQC38PW542EQJ5M11CR25P7BS1CA6QT4TBXGB3M.stx-ststx-lp-token-v-1-1"
+
+[[project.requirements ]]
+contract_id = "SPQC38PW542EQJ5M11CR25P7BS1CA6QT4TBXGB3M.stx-ststx-lp-token-v-1-2"
+
+[[project.requirements ]]
+contract_id = "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-wstx-v2"
 
 [contracts.flashstack-core]
 path = "contracts/flashstack-core.clar"
@@ -65,6 +223,9 @@ epoch = 2.5
 # --- Tests for the DEPLOYED reserve-model core (flashstack-stx-core) ---
 # flashstack-stx-core here is a localized copy of the immutable mainnet contract
 # (SP20XD46...flashstack-stx-core); logic is byte-identical, trait ref localized for simnet.
+# Re-verified 2026-09-15 against the source fetched from the chain. Do NOT harden this
+# file: it is the record of what is actually live, and the tests that assert deployed
+# behavior depend on it. Fixes belong in a named successor (flashstack-stx-core-v2).
 [contracts.stx-flash-receiver-trait]
 path = "contracts/stx-flash-receiver-trait.clar"
 clarity_version = 3
@@ -148,6 +309,36 @@ clarity_version = 3
 epoch = "3.0"
 
 # --- BC1 fix: two-step admin transfer successors (not yet deployed) ---
+[contracts.flashstack-stx-core-v2]
+path = "contracts/test/flashstack-stx-core-v2.clar"
+clarity_version = 3
+epoch = "3.0"
+
+# stx-test-receiver / sbtc-test-receiver are now registered via #48's D6 batch
+# (merged into main -- see below in this file). This PR only adds the new v2
+# receiver on top of that.
+#
+# stx-test-receiver-v2 targets flashstack-stx-core-v2, not the deployed v1 core --
+# Clarity requires a statically-known contract-call? target, so a receiver
+# can't dynamically call the `core` principal it receives in the callback.
+# New contract, not an edit, for the same reason every other successor here is
+# a new contract. See docs/TESTNET_STAGING.md.
+#
+# epoch = "latest", not "3.0": tried pinning this (and stx-test-receiver,
+# sbtc-test-receiver below) to match clarity_version = 3, per review on #56.
+# Reverted after actually testing it -- all three impl-trait the live-fetched
+# SP3TGRVG….stx-flash-receiver-trait / sbtc-flash-receiver-trait, which
+# resolves to epoch 3.4 on fetch, not 3.0. Pinning to "3.0" produces "X is
+# deployed at epoch 3.0, but dependency … requires epoch 3.4" -- reproduced,
+# not assumed: clarinet check passed at 3.0 but the simnet-backed test suite
+# failed on exactly this for both files. "latest" is the verified-working
+# choice for anything depending on this externally-fetched trait; explicit
+# pinning stays correct for contracts whose full dependency chain is ours.
+[contracts.stx-test-receiver-v2]
+path = "contracts/stx-test-receiver-v2.clar"
+clarity_version = 3
+epoch = "latest"
+
 [contracts.flashstack-sbtc-pool-v3]
 path = "contracts/test/flashstack-sbtc-pool-v3.clar"
 clarity_version = 3
@@ -169,12 +360,16 @@ clarity_version = 3
 epoch = "3.0"
 
 # --- flashstack-pool-v3: generic multi-asset flash-loan + LP pool ---
-# Built on Clarity 3 for now: verified 2026-08-01 that `as-contract` (used by
-# every deposit/withdraw/flash-loan) does not resolve at clarity_version=6 in
-# clarinet-sdk 3.22/3.23 or clarinet CLI 3.22 -- reproduced with a minimal
-# isolated probe contract, confirmed on the latest available SDK release. Not
-# a workaround-able code issue; it's a toolchain gap. Bump to clarity_version=6
-# (one-line change here + in the .clar headers) once clarinet/SDK fix this.
+# Migrated to Clarity 6 on 2026-09-09 (see the file's own header comment for
+# the as-contract -> as-contract?/current-contract migration detail). Earlier
+# notes here called the clarity_version=6 "use of unresolved function
+# 'as-contract'" error a toolchain gap -- that was wrong. `as-contract` is a
+# hard error by design as of Clarity 4, deprecated in favor of `as-contract?`
+# (explicit outflow allowances) and `current-contract`. The receiver test
+# contracts below (test-pool-v3-receiver-*) deliberately stay on Clarity 3 --
+# each contract's version is fixed independently at deploy time, and
+# cross-version contract-call? is normal on Stacks, so there's no reason to
+# touch contracts this migration didn't require changing.
 [contracts.sip-010-trait-ft-standard]
 path = "contracts/test/sip-010-trait-ft-standard.clar"
 clarity_version = 3
@@ -197,23 +392,148 @@ epoch = "3.0"
 
 [contracts.flashstack-pool-v3]
 path = "contracts/test/flashstack-pool-v3.clar"
-clarity_version = 3
-epoch = "3.0"
+clarity_version = 6
+epoch = "4.0"
 
 [contracts.test-pool-v3-receiver-good]
 path = "contracts/test/test-pool-v3-receiver-good.clar"
 clarity_version = 3
-epoch = "3.0"
+epoch = "4.0"
 
 [contracts.test-pool-v3-receiver-bad]
 path = "contracts/test/test-pool-v3-receiver-bad.clar"
 clarity_version = 3
-epoch = "3.0"
+epoch = "4.0"
 
 [contracts.test-pool-v3-receiver-reentrant]
 path = "contracts/test/test-pool-v3-receiver-reentrant.clar"
 clarity_version = 3
-epoch = "3.0"
+epoch = "4.0"
+
+# --- Standalone receiver/strategy contracts previously outside clarinet check ---
+# Found by the Security & Contract Lead (docs/security/CONTRACT_INVENTORY.md D6):
+# clarinet check covered 38 of 70 .clar files; the gap included several of these
+# that are live on mainnet. Registered so a syntax/type error here fails CI like
+# everywhere else. Not registered here: bitflow-arb-compounder.clar, which is
+# gitignored as a "stale experiment" and not tracked, so registering it wouldn't work
+# for any other checkout; and snp-flashstack-receiver.clar / -v3.clar, which ARE
+# tracked now (D7 closed 2026-09-21) as verbatim copies of the deployed gen-1
+# contracts, pinned by tests/deployed-source-pins.test.ts. They are immutable and
+# already on chain, so a deployed contract has passed the chain's own analysis;
+# registering them would add nothing until someone changes them, and they must not
+# be changed.
+[contracts.alex-arb-receiver]
+path = "contracts/alex-arb-receiver.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.alex-arb-receiver-v3]
+path = "contracts/alex-arb-receiver-v3.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.alex-arb-receiver-v4]
+path = "contracts/alex-arb-receiver-v4.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.alex-arb-receiver-v5]
+path = "contracts/alex-arb-receiver-v5.clar"
+clarity_version = 3
+epoch = "latest"
+
+# arkadiko-liquidation-receiver: NOT registered. clarinet check fails once its
+# real Arkadiko dependencies resolve: "expecting read-only statements, detected
+# a writing operation" in check-vault (line 249), which only calls
+# VAULTS-DATA.get-vault -- conceptually a pure read. The contract is live on
+# mainnet (SP20XD46...), so it deployed successfully; this needs the Security
+# Lead's judgment on whether that's a real issue clarinet's analyzer is
+# correctly catching (something in the real get-vault call chain does write)
+# or a static-analysis limitation, before either fixing or excluding for real.
+# Filed, not resolved -- see docs/security/CONTRACT_INVENTORY.md D6 follow-up.
+
+[contracts.bitflow-arb-receiver]
+path = "contracts/bitflow-arb-receiver.clar"
+clarity_version = 3
+epoch = "latest"
+
+# crosspool-ststx-receiver: registered so clarinet check notices if this rots.
+# Still a DRAFT, NOT YET DEPLOYED (see its header) -- registration is coverage,
+# not readiness, and nothing here registers it for deployment. epoch = "latest",
+# not "3.0": it impl-traits the live-fetched stx-flash-receiver-trait, which
+# resolves to epoch 3.4 (same constraint documented at stx-test-receiver-v2).
+[contracts.crosspool-ststx-receiver]
+path = "contracts/crosspool-ststx-receiver.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.hk-sbtc-real-receiver-v1]
+path = "contracts/hk-sbtc-real-receiver-v1.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.hk-stx-bitflow-receiver-v1]
+path = "contracts/hk-stx-bitflow-receiver-v1.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.ian-stx-receiver-v1]
+path = "contracts/ian-stx-receiver-v1.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.sbtc-test-receiver]
+path = "contracts/sbtc-test-receiver.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.simple-receiver]
+path = "contracts/simple-receiver.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.stx-test-receiver]
+path = "contracts/stx-test-receiver.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.stx-receiver-template]
+path = "contracts/templates/stx-receiver-template.clar"
+clarity_version = 3
+epoch = "latest"
+
+# usda-vault-rescue-receiver: NOT registered. clarinet check fails at
+# estimate-stx-for-usda (line 168) with the same read-only/write error as
+# arkadiko-liquidation-receiver above -- also live on mainnet, same open
+# question, same reason for not guessing at a fix here. Filed, not resolved.
+
+[contracts.velar-sbtc-arb-receiver]
+path = "contracts/velar-sbtc-arb-receiver.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.zest-liquidation-receiver]
+path = "contracts/zest-liquidation-receiver.clar"
+clarity_version = 3
+epoch = "latest"
+
+# zest-v2-liquidation-receiver: NOT registered. clarinet check fails at line
+# 167 -- "expecting expression of type 'uint', found '(optional uint)'"
+# passing (some min-usdh) where a bare uint is expected. Unlike the two
+# read-only findings above, this looks like a straightforward type-mismatch
+# bug, not a static-analysis question -- but it's live on mainnet, so still
+# the Security Lead's call on whether it's a real bug in the deployed
+# contract or another source-drift case like F-7. Filed, not resolved.
+
+[contracts.flashstack-yield-vault]
+path = "contracts/flashstack-yield-vault.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.flashstack-yield-vault-v5]
+path = "contracts/flashstack-yield-vault-v5.clar"
+clarity_version = 3
+epoch = "latest"
 
 [repl.analysis]
 passes = ["check_checker"]

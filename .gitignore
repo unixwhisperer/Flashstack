@@ -14,8 +14,17 @@ yarn-error.log*
 # ============================================
 # Clarinet
 # ============================================
-.cache/
+.cache/*
 history.txt
+# Exception: clarinet's fetched external-contract requirements. CI starts
+# with an empty cache on every run, and clarinet check now needs ~300 of
+# these (transitive) to resolve the receiver contracts registered for D6
+# coverage -- fetching that many live from Hiro's API in one burst gets
+# 429 Too Many Requests within seconds (confirmed: PR #48's own CI run).
+# These are read-only source dumps of already-deployed, immutable
+# contracts, so there's no staleness risk -- same reasoning as committing
+# a lockfile.
+!.cache/requirements/
 *.devnet
 *.testnet
 *.mainnet
@@ -142,6 +151,7 @@ SNP_INTEGRATION_STEPS.md
 TESTNET_DEPLOYMENT.md
 deployments/testnet-*.yaml
 !deployments/testnet-plan.yaml
+!deployments/testnet-current-gen-plan.yaml
 
 # ============================================
 # Frontend (web/)
@@ -241,6 +251,4 @@ web/tsconfig.tsbuildinfo
 deployments/default.simnet-plan.yaml
 
 # Stale experiment contracts
-contracts/snp-flashstack-receiver.clar
-contracts/snp-flashstack-receiver-v3.clar
 contracts/bitflow-arb-compounder.clar

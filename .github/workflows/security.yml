@@ -19,13 +19,16 @@ jobs:
         with:
           node-version: "20"
 
+      # No continue-on-error: this step must be able to fail. It used to be set,
+      # which made the job pass unconditionally -- PR #61's run printed several
+      # "Severity: high" findings and the job still concluded success. A check that
+      # can't go red isn't evidence of anything. Dependency Audit is not a required
+      # status check, so a red run here never blocks a merge; it is a signal.
       - name: Audit root dependencies
         run: npm audit --audit-level=high
-        continue-on-error: true
 
       - name: Audit web dependencies
         run: cd web && npm audit --audit-level=high
-        continue-on-error: true
 
   codeql:
     name: CodeQL Analysis

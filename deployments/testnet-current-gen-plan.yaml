@@ -1,0 +1,274 @@
+# FlashStack — current-generation testnet staging plan
+#
+# THIS IS NOT A CLARINET DEPLOYMENT PLAN. Do not run it with
+# `clarinet deployments apply`. It has a deliberately different shape from the
+# `default.*-plan.yaml` files beside it so the two cannot be confused: those are
+# Clarinet-generated and publish source verbatim, which on testnet would broadcast
+# contracts still carrying mainnet principals and abort at publish time
+# (docs/TESTNET_STAGING.md §5.1).
+#
+# This file is the written form of what `scripts/deploy-testnet.mjs` executes: the
+# contract set, the order, the fees, the nonce discipline and the arguments. Every
+# number below is READ OFF THAT SCRIPT — none is estimated, and none has been
+# invented in prose (docs/TESTNET_STAGING.md §7). Source line references are given
+# per field so a reviewer can diff the file against the script rather than trust it.
+#
+# The `evidence:` blocks are empty on purpose. They are filled in from a run, and
+# every value must be independently re-verified against the live testnet API — not
+# copied from the script's console output (docs/TESTNET_STAGING.md §6a).
+
+schema: flashstack-testnet-staging-plan/v1
+generated: 2026-09-21
+derived-from: scripts/deploy-testnet.mjs   # at 737c659
+executed-by: node scripts/deploy-testnet.mjs   # requires TESTNET_MNEMONIC, operator only
+network: testnet
+stacks-node: https://api.testnet.hiro.so      # deploy-testnet.mjs:70
+explorer: https://explorer.hiro.so/txid       # deploy-testnet.mjs:71
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Deployer
+# ─────────────────────────────────────────────────────────────────────────────
+# Derived at runtime from TESTNET_MNEMONIC (deploy-testnet.mjs:95-103); it is not
+# and must never be committed. The address below is the one that executed §6a/§6b
+# and currently holds admin on the deployed core — recorded so a re-run can be
+# checked against it, NOT as configuration the script reads.
+deployer:
+  address: ST3XQ5DMH4BRXVZWAHKJFBNND17CPCSAYMV4T0NFT
+  source: derived from TESTNET_MNEMONIC at runtime
+  preflight:
+    # deploy-testnet.mjs:249-257
+    warn-below-microstx: 5000000000    # prints a funding warning, then continues
+    hard-stop-below-microstx: 500000000
+    # NOTE: the warning text says "~3000 STX", but the transactions below require
+    # 53.31 STX in total (see totals:). The threshold is conservative, not wrong;
+    # it is recorded here as the script behaves, not as the plan needs.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Source localization — applied to every published contract before broadcast
+# ─────────────────────────────────────────────────────────────────────────────
+localization:
+  module: scripts/lib/testnet-localize.mjs      # deploy-testnet.mjs:58, 105-115
+  rule: >-
+    Every OURS principal is rewritten to the testnet deployer; every
+    TESTNET_EQUIVALENT principal to its verified testnet counterpart; any
+    surviving mainnet principal aborts the run before broadcast
+    (assertFullyLocalized).
+  affects-this-plan:
+    # The only mainnet principal present in this contract set.
+    - SP3TGRVG7DKGFVRTTVGGS60S59R916FWB4DAB9STZ: >-
+        gen-1 deployer, referenced by flashstack-stx-core-v2.clar:23 (use-trait)
+        and stx-test-receiver-v2.clar:10 (impl-trait). Rewritten to the deployer,
+        which is why stx-flash-receiver-trait must publish first.
+  no-testnet-equivalent-needed: true   # this line touches no sBTC contract
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Nonce discipline
+# ─────────────────────────────────────────────────────────────────────────────
+nonces:
+  # deploy-testnet.mjs:261 then `nonce++` at each broadcast site.
+  start: fetched from /v2/accounts/<deployer>?proof=0 at run time
+  allocation: strictly sequential, +1 per transaction, one signer, no gaps
+  batching: >-
+    None. Every transaction waits for confirmation before the next is built
+    (waitForConfirm, deploy-testnet.mjs:132-151 — 8s poll, 80 attempts, ~10min
+    ceiling per tx). There are no parallel batches; a failure stops the run.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Transactions, in execution order
+# ─────────────────────────────────────────────────────────────────────────────
+# fee is in microSTX and is fixed by the script — it is not estimated per-tx.
+# nonce-offset is relative to the starting nonce.
+transactions:
+
+  - step: 1
+    type: contract-publish
+    contract-name: stx-flash-receiver-trait
+    path: contracts/stx-flash-receiver-trait.clar
+    clarity-version: 3          # deploy-testnet.mjs:182
+    post-condition-mode: allow  # deploy-testnet.mjs:183
+    fee: 500000                 # deploy-testnet.mjs:185
+    nonce-offset: 0
+    why: Must publish first — both contracts below resolve their trait to it.
+    evidence: { txid: null, block-height: null, status: null }
+
+  - step: 2
+    type: contract-publish
+    contract-name: flashstack-stx-core-v2
+    path: contracts/flashstack-stx-core-v2.clar
+    clarity-version: 3
+    post-condition-mode: allow
+    fee: 500000
+    nonce-offset: 1
+    why: The BC1 two-step-admin successor this whole staging line exists to prove.
+    evidence: { txid: null, block-height: null, status: null }
+
+  - step: 3
+    type: contract-publish
+    contract-name: stx-test-receiver-v2
+    path: contracts/stx-test-receiver-v2.clar
+    clarity-version: 3
+    post-condition-mode: allow
+    fee: 500000
+    nonce-offset: 2
+    why: >-
+      Minimal borrow-and-repay receiver. Its contract-call? target is the STATIC
+      `.flashstack-stx-core-v2` (stx-test-receiver-v2.clar:16) — see
+      execution-decision below, this is what makes a renamed line non-trivial.
+    evidence: { txid: null, block-height: null, status: null }
+
+  - step: 4
+    type: contract-call
+    contract: <deployer>.flashstack-stx-core-v2
+    function: add-approved-receiver
+    args: [ "principal <deployer>.stx-test-receiver-v2" ]
+    fee: 100000                 # deploy-testnet.mjs:194 default
+    nonce-offset: 3
+    evidence: { txid: null, block-height: null, status: null }
+
+  - step: 5
+    type: contract-call
+    contract: <deployer>.flashstack-stx-core-v2
+    function: deposit-reserve
+    args: [ "uint 50000000" ]   # RESERVE_AMOUNT, deploy-testnet.mjs:75
+    fee: 200000                 # deploy-testnet.mjs:319
+    nonce-offset: 4
+    evidence: { txid: null, block-height: null, status: null }
+
+  - step: 6
+    type: stx-transfer
+    recipient: <deployer>.stx-test-receiver-v2
+    amount: 1000000             # RECEIVER_SEED_AMOUNT, deploy-testnet.mjs:80
+    memo: seed receiver fee     # deploy-testnet.mjs:222
+    fee: 10000                  # deploy-testnet.mjs:213 default
+    nonce-offset: 5
+    why: >-
+      The receiver repays principal + fee from its OWN balance; a freshly
+      published receiver holds 0 STX and the flash loan reverts with (err u500).
+    evidence: { txid: null, block-height: null, status: null }
+
+  - step: 7
+    type: contract-call
+    contract: <deployer>.flashstack-stx-core-v2
+    function: flash-loan
+    args: [ "uint 10000000", "principal <deployer>.stx-test-receiver-v2" ]
+    fee: 200000                 # deploy-testnet.mjs:349
+    nonce-offset: 6
+    asserts:
+      # Not asserted by the script; verified on review in §6a and repeatable.
+      - reserve grows by exactly 5000 microSTX (0.05% of 10 STX, fee-bp = u5)
+    evidence: { txid: null, block-height: null, status: null }
+
+  # ── Step 8 — the reason this plan exists ──────────────────────────────────
+  # Three transactions with read-only assertions between them. The assertions,
+  # not the txids, are the evidence: a broken ONE-step transfer-admin would emit
+  # three identical successful txids. This sequence is a92fb8e's fix; §6a's
+  # BC1 rows predate it (docs/TESTNET_STAGING.md §6a, staleness note).
+
+  - step: 8a
+    type: contract-call
+    contract: <deployer>.flashstack-stx-core-v2
+    function: transfer-admin
+    args: [ "principal ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM" ]  # OTHER, :365
+    fee: 100000                 # deploy-testnet.mjs:373
+    nonce-offset: 7
+    why: >-
+      OTHER is the public Clarinet default testnet deployer — a real principal
+      this key does NOT control. Proposing to self (the pre-a92fb8e sequence)
+      leaves admin equal to the deployer before and after and therefore cannot
+      distinguish a correct two-step contract from a broken one-step one.
+    asserts:                    # deploy-testnet.mjs:377-381
+      - get-admin == <deployer>            # MUST NOT have moved
+      - get-pending-admin == (some ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM)
+    evidence: { txid: null, block-height: null, status: null }
+
+  - step: 8b
+    type: contract-call
+    contract: <deployer>.flashstack-stx-core-v2
+    function: transfer-admin
+    args: [ "principal <deployer>" ]
+    fee: 100000                 # deploy-testnet.mjs:388
+    nonce-offset: 8
+    why: >-
+      Re-propose to self. Safe with a single key because a second propose
+      overwrites pending-admin, and it doubles as proof that a fat-fingered
+      address is recoverable before anyone accepts it.
+    asserts:                    # deploy-testnet.mjs:392-393
+      - get-pending-admin == (some <deployer>)
+    evidence: { txid: null, block-height: null, status: null }
+
+  - step: 8c
+    type: contract-call
+    contract: <deployer>.flashstack-stx-core-v2
+    function: accept-admin
+    args: []
+    fee: 100000                 # deploy-testnet.mjs:399
+    nonce-offset: 9
+    asserts:                    # deploy-testnet.mjs:403-404
+      - get-admin == <deployer>
+    evidence: { txid: null, block-height: null, status: null }
+
+# ─────────────────────────────────────────────────────────────────────────────
+totals:
+  transactions: 10
+  fees-microstx: 2310000        # 3x500000 + 100000 + 200000 + 10000 + 200000 + 3x100000
+  stx-moved-microstx: 51000000  # 50000000 reserve + 1000000 receiver seed
+  required-balance-microstx: 53310000   # 53.31 STX
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Execution decision — REQUIRED BEFORE THIS PLAN IS RUN
+# ─────────────────────────────────────────────────────────────────────────────
+# Read live from the API on 2026-09-21, sender ST3XQ5DM…:
+#   get-admin            ST3XQ5DMH4BRXVZWAHKJFBNND17CPCSAYMV4T0NFT
+#   get-pending-admin    none
+#   get-reserve-balance  u50005000
+#   get-fee-basis-points u5
+#   is-approved-receiver(<deployer>.stx-test-receiver-v2)  true
+#   deployer nonce 12, balance 946490000 microSTX
+# i.e. the §6a/§6b deployment is intact and §6b's restore held.
+#
+# Steps 1-3 publish contract names that ALREADY EXIST at that address. A contract
+# name is consumed permanently at a principal whether or not the publish took
+# effect (CONTRACT_INVENTORY §3, deployment scars), so running this plan
+# unmodified against the same key cannot re-publish them. That leaves two routes,
+# and they are not equally cheap:
+#
+#   A. Admin steps only, against the existing deployment.
+#      Costs 300000 microSTX and touches nothing else — but deploy-testnet.mjs
+#      is linear and had no step selection, so it needed either a step flag or a
+#      purpose-built script (the precedent is scripts/deploy-testnet-bc1-negative.mjs,
+#      which §6b used for exactly this reason). Note Flashstack-ajv.6.3's
+#      acceptance criterion asks for "a run of the CURRENT deploy-testnet.mjs",
+#      which this route does not literally satisfy — ajv.6.3's criterion was
+#      amended to say so openly. --steps=admin runs that script's own Step 8
+#      path, extracted rather than copied, but not the whole script.
+#
+#   B. A fresh -v3 line, full 10-step run.
+#      Costs 53.31 STX (affordable at the current balance, though the script's
+#      preflight will warn). But it is NOT a rename in the script:
+#      stx-test-receiver-v2.clar:16 calls `.flashstack-stx-core-v2` statically, so
+#      a -v3 core needs a -v3 receiver source too. New .clar files, review, and a
+#      wider diff than the BC1 evidence gap warrants.
+#
+# DECIDED 2026-09-21: route A. `deploy-testnet.mjs --steps=admin` (PR #66) runs
+# Step 8 and nothing else against the existing deployment, and refuses unless the
+# contract exists, admin is the signing deployer and pending-admin is none
+# (scripts/lib/testnet-preconditions.mjs). B is parked: staging
+# flashstack-stx-pool-v3 is worth more than a -v3 rename.
+#
+# CONSEQUENCE FOR THIS FILE: steps 1-7 stay unexecuted for this line — they are
+# already on chain from the §6a run. Only the 8a / 8b / 8c evidence: slots get
+# filled by the re-run. The steps above remain the written record of how that
+# deployment was produced, and the plan a NEW line (pool-v3, sbtc) would follow.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Not covered by this plan
+# ─────────────────────────────────────────────────────────────────────────────
+# Deliberately narrow, matching deploy-testnet.mjs:25-34:
+#   - flashstack-stx-pool-v3        (needs its own receiver, same static-target constraint)
+#   - flashstack-pool-v3 + flashstack-sbtc-core-v2 (multi-asset line, add-asset
+#     calibration, own receiver — stageable per #55 but a materially bigger deploy)
+# Also not covered, and still open on the §6 checklist for this line:
+#   - non-repaying receiver reverts — no such contract exists for core-v2; one
+#     would have to be written and published.
+#   - unapproved receiver is rejected — needs no new contract, but no step here
+#     performs it.

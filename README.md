@@ -3,7 +3,7 @@
 **Open flash-liquidity infrastructure for Bitcoin Layer 2**
 
 [![Status](https://img.shields.io/badge/Status-Mainnet%20Live-brightgreen)]()
-[![Tests](https://img.shields.io/badge/Tests-128%20Passing-success)]()
+[![Tests](https://img.shields.io/badge/Tests-254%20Passing-success)]()
 [![Clarity](https://img.shields.io/badge/Clarity-3-F7931A)]()
 [![Live](https://img.shields.io/badge/App-flashstack.vercel.app-F7931A)](https://flashstack.vercel.app)
 [![License](https://img.shields.io/badge/License-MIT-yellow)]()
@@ -70,7 +70,7 @@ Fee: **0.05%** per loan. Assets: **STX** and **canonical sBTC** (`SM3VDXK3WZZSA8
 **Status: mainnet, not yet professionally audited. Use at your own risk.**
 
 - **Solvency invariant** — every core/pool measures its asset balance before and after the receiver callback and reverts unless it grew by at least the fee. This is what makes an arbitrary receiver safe.
-- **128-test suite** (Vitest + Clarinet simnet) covering every deployed contract — both invariants and every guard.
+- **254-test suite** (Vitest + Clarinet simnet) covering every deployed contract — both invariants and every guard. The suite runs against the localized simnet copies under `contracts/test/`, not the canonical sources; see `docs/security/CONTRACT_INVENTORY.md` §5 (D6).
 - **Internal security review** — see the trust model, per-contract analysis, and findings register (kept local until remediation). Two findings were fixed and proven by test: **F-1** (LP share inflation → virtual-shares v2 pools) and **F-2** (oracle scale consistency).
 - **Access control** — admin can deposit/withdraw reserve, pause, and set parameters; it cannot mint, alter loans, or seize LP funds. The receiver whitelist is defense-in-depth during the unaudited beta and is designed to be removed post-audit (permissionless, like Aave).
 
@@ -84,7 +84,7 @@ A professional third-party audit is the top priority before opening real LP depo
 git clone https://github.com/mattglory/Flashstack.git
 cd flashstack
 npm install
-npm test          # 128 tests passing
+npm test          # 254 tests passing
 npm run check     # clarinet check — type-checks contracts registered in Clarinet.toml
                   # (script-deployed receivers aren't in the project; see docs/BUILD_A_RECEIVER.md)
 

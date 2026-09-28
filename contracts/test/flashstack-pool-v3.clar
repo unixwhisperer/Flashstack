@@ -46,12 +46,20 @@
 ;; NOT YET DEPLOYED. Deploy order: flashstack-v3-receiver-trait FIRST (fresh,
 ;; under the secure wallet SPR9PQ...), then this contract.
 ;;
-;; Clarity version: 3 for now (NOT 6). Verified 2026-08-01: `as-contract`
-;; (used throughout deposit/withdraw/flash-loan) fails to resolve at
-;; clarity_version=6 in the current clarinet-sdk/CLI (3.22/3.23) -- a
-;; toolchain gap, reproduced with an isolated minimal probe, not a defect
-;; in this contract. Bump to 6 once clarinet/SDK fix it; no other Clarity-6-
-;; specific feature is used, so the flip should be a one-line change.
+;; Clarity version: 6 (migrated 2026-09-09). `as-contract` was removed in
+;; Clarity 4 in favor of `as-contract?` (explicit outflow allowances) and the
+;; `current-contract` keyword (for the common "get my own principal" case
+;; that carries no privilege at all). Every prior `as-contract` use here was
+;; a plain identity read except the two real fund outflows (withdraw's and
+;; flash-loan's transfer-out), which now carry an explicit
+;; `(with-ft (contract-of token) "*" amount)` allowance -- scoped to the one
+;; listed token contract and the exact amount being sent, with "*" for the
+;; token-name because this pool is generic across SIP-010 assets and can't
+;; know each one's internal `define-fungible-token` name at compile time.
+;; Deliberately not `with-all-assets-unsafe`: that grants unrestricted access
+;; to every asset the contract holds, which is unnecessary here and exactly
+;; the kind of over-broad allowance the SIP itself warns against when a
+;; narrower one is available.
 
 (use-trait sip-010-trait .sip-010-trait-ft-standard.sip-010-trait)
 (use-trait flashstack-v3-receiver-trait .flashstack-v3-receiver-trait.flashstack-v3-receiver-trait)
@@ -186,7 +194,7 @@
     (asset        (contract-of token))
     (existing     (map-get? assets asset))
     (decimals     (unwrap! (contract-call? token get-decimals) ERR-DECIMALS-READ-FAILED))
-    (live-balance (unwrap! (contract-call? token get-balance (as-contract tx-sender)) ERR-BALANCE-READ-FAILED))
+    (live-balance (unwrap! (contract-call? token get-balance current-contract) ERR-BALANCE-READ-FAILED))
   )
     (asserts! (is-eq tx-sender (var-get admin)) ERR-NOT-ADMIN)
     (asserts! (not (default-to false (get enabled existing))) ERR-ALREADY-LISTED)
@@ -264,7 +272,7 @@
     (asset        (contract-of token))
     (depositor    tx-sender)
     (cfg          (unwrap! (map-get? assets asset) ERR-NOT-LISTED))
-    (pool-balance (unwrap! (contract-call? token get-balance (as-contract tx-sender)) ERR-BALANCE-READ-FAILED))
+    (pool-balance (unwrap! (contract-call? token get-balance current-contract) ERR-BALANCE-READ-FAILED))
     (current-shares (default-to u0 (map-get? total-shares asset)))
     ;; shares = amount * (total_shares + share_scale) / (pool_balance + VA)
     (new-shares (/ (* amount (+ current-shares (get share-scale cfg))) (+ pool-balance VIRTUAL-ASSETS)))
@@ -300,7 +308,7 @@
     ;; Refresh the cached reserve: this deposit is about to land `amount`
     ;; more into the contract, on top of the balance measured above.
     (map-set assets asset (merge cfg { reserve: (+ pool-balance amount) }))
-    (unwrap! (contract-call? token transfer amount depositor (as-contract tx-sender) none) ERR-TRANSFER-FAILED)
+    (unwrap! (contract-call? token transfer amount depositor current-contract none) ERR-TRANSFER-FAILED)
     (map-set asset-locked asset false)
     (ok new-shares)
   )
@@ -317,7 +325,7 @@
     ;; remove-asset soft-disables rather than deleting -- so this unwrap!
     ;; never fails for a genuine withdrawer, even on a delisted asset.
     (cfg              (unwrap! (map-get? assets asset) ERR-NOT-LISTED))
-    (pool-balance     (unwrap! (contract-call? token get-balance (as-contract tx-sender)) ERR-BALANCE-READ-FAILED))
+    (pool-balance     (unwrap! (contract-call? token get-balance current-contract) ERR-BALANCE-READ-FAILED))
     ;; assets_out = shares * (pool_balance + VA) / (total_shares + share_scale)
     (amount-out (/ (* shares (+ pool-balance VIRTUAL-ASSETS)) (+ current-shares (get share-scale cfg))))
   )
@@ -331,7 +339,10 @@
     (asserts! (> amount-out u0) ERR-ZERO-AMOUNT)
     (map-set lp-shares { asset: asset, lp: withdrawer } (- depositor-shares shares))
     (map-set total-shares asset (- current-shares shares))
-    (unwrap! (as-contract (contract-call? token transfer amount-out tx-sender withdrawer none)) ERR-TRANSFER-FAILED)
+    (unwrap!
+      (as-contract? ((with-ft (contract-of token) "*" amount-out))
+        (unwrap! (contract-call? token transfer amount-out tx-sender withdrawer none) ERR-TRANSFER-FAILED))
+      ERR-TRANSFER-FAILED)
     (map-set assets asset (merge cfg { reserve: (- pool-balance amount-out) }))
     (map-set asset-locked asset false)
     (ok amount-out)
@@ -349,7 +360,7 @@
     (receiver-principal (contract-of receiver))
     (raw-fee   (/ (* amount (get fee-bp cfg)) u10000))
     (fee       (if (> raw-fee u0) raw-fee u1))
-    (reserve-before (unwrap! (contract-call? token get-balance (as-contract tx-sender)) ERR-BALANCE-READ-FAILED))
+    (reserve-before (unwrap! (contract-call? token get-balance current-contract) ERR-BALANCE-READ-FAILED))
   )
     ;; F1 fix: per-asset reentrancy guard. This is what actually stops
     ;; Hillary Kibet's finding -- a receiver reentering deposit() for the SAME
@@ -366,14 +377,17 @@
     (asserts! (>= reserve-before amount)                                      ERR-INSUFFICIENT-RESERVE)
 
     ;; Send the asset to the receiver.
-    (unwrap! (as-contract (contract-call? token transfer amount tx-sender receiver-principal none)) ERR-TRANSFER-FAILED)
+    (unwrap!
+      (as-contract? ((with-ft (contract-of token) "*" amount))
+        (unwrap! (contract-call? token transfer amount tx-sender receiver-principal none) ERR-TRANSFER-FAILED))
+      ERR-TRANSFER-FAILED)
 
     ;; Invoke the receiver callback. It must repay amount + fee before returning.
-    (try! (contract-call? receiver execute-flash token amount (as-contract tx-sender)))
+    (try! (contract-call? receiver execute-flash token amount current-contract))
 
     ;; INVARIANT: this asset's reserve must have grown by >= fee. Measured, not
     ;; trusted -- identical safety to the single-asset cores, applied per token.
-    (let ((reserve-after (unwrap! (contract-call? token get-balance (as-contract tx-sender)) ERR-BALANCE-READ-FAILED)))
+    (let ((reserve-after (unwrap! (contract-call? token get-balance current-contract) ERR-BALANCE-READ-FAILED)))
       (asserts! (>= reserve-after (+ reserve-before fee)) ERR-REPAY-FAILED)
       (map-set assets asset (merge cfg {
         reserve:      reserve-after,

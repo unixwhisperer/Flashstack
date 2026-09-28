@@ -49,10 +49,12 @@ describe("BC1: one-step self-gated admin transfer is permanently unrecoverable",
   });
 
   it("CONTRAST: a two-step transfer would NOT lock out — the mistaken admin never accepts", () => {
-    // flashstack-stx-core (repo source) implements transfer-admin + accept-admin.
-    const CORE = "flashstack-stx-core";
+    // flashstack-stx-core-v2 is the BC1 successor: transfer-admin + accept-admin.
+    // NOT flashstack-stx-core — that is the faithful copy of the one-step mainnet
+    // contract and must keep the deployed behavior.
+    const CORE = "flashstack-stx-core-v2";
     const registered = simnet.getContractsInterfaces().has(`${deployer}.${CORE}`);
-    if (!registered) { console.log("  (flashstack-stx-core not registered in this simnet — skipping contrast)"); return; }
+    if (!registered) { console.log("  (flashstack-stx-core-v2 not registered in this simnet — skipping contrast)"); return; }
 
     // Propose a dead admin. With two-step, admin does NOT change until accept-admin.
     expect(simnet.callPublicFn(CORE, "transfer-admin", [Cl.principal(DEAD_PRINCIPAL)], deployer).result).toBeOk(Cl.bool(true));

@@ -4,7 +4,7 @@ import { Cl } from "@stacks/transactions";
 /**
  * BC1 FIX verification — two-step admin transfer neutralizes the lockout.
  *
- * For each hardened successor (flashstack-{sbtc,stx}-pool-v3, flashstack-sbtc-core-v2):
+ * For each hardened successor (flashstack-{sbtc,stx}-pool-v3, flashstack-{sbtc,stx}-core-v2):
  *  1. Proposing an uncontrolled admin does NOT change admin (no lockout) — the exact
  *     sequence that permanently bricks the one-step deployed contracts.
  *  2. The original admin retains control and can RECOVER by re-proposing a good admin.
@@ -18,6 +18,7 @@ const CASES = [
   { name: "flashstack-sbtc-pool-v3", propose: "transfer-admin", errNotPending: 711 },
   { name: "flashstack-stx-pool-v3",  propose: "transfer-admin", errNotPending: 410 },
   { name: "flashstack-sbtc-core-v2", propose: "set-admin",      errNotPending: 312 },
+  { name: "flashstack-stx-core-v2",  propose: "transfer-admin", errNotPending: 309 },
 ];
 
 describe("BC1 fix: two-step admin transfer prevents the lockout", () => {
